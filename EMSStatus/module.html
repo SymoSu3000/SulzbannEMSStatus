@@ -1,3 +1,254 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   THEME
+============================================================ */
+
+:root {
+    color-scheme: light dark;
+
+    --text: #20262b;
+    --muted: #66737b;
+
+    --border: rgba(0, 0, 0, 0.13);
+
+    --yellow: #e5a900;
+    --blue: #149be3;
+    --green: #00b87a;
+    --orange: #f28a1b;
+    --purple: #a34fe0;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    :root {
+        --text: #f2f7fa;
+        --muted: #a7bdc9;
+
+        --border:
+            rgba(
+                120,
+                160,
+                178,
+                0.27
+            );
+
+        --yellow: #ffc83d;
+        --blue: #32a7f4;
+        --green: #25da91;
+        --orange: #ff9d2d;
+        --purple: #bb70ff;
+    }
+
+}
+
+
+/* ============================================================
+   BASIS
+============================================================ */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+
+.ems {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    grid-template-rows:
+        1fr
+        1fr;
+
+    overflow: hidden;
+
+    padding:
+        7px
+        10px
+        8px
+        10px;
+
+    background: transparent;
+}
+
+
+/* ============================================================
+   OBEN
+   NÄCHSTES ZIEL | PV-PROGNOSE
+============================================================ */
+
+.top-row {
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    align-items: center;
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.info-block {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    padding:
+        5px
+        14px;
+}
+
+
+.info-block + .info-block {
+    border-left:
+        1px solid
+        var(--border);
+}
+
+
+.info-inner {
+    display: grid;
+
+    grid-template-columns:
+        42px
+        minmax(0, auto);
+
+    align-items: center;
+
+    column-gap: 11px;
+}
+
+
+/* ============================================================
+   OBERE SYMBOLE
+============================================================ */
+
+.big-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 33px;
+
+    line-height: 1;
+}
+
+
+.target-icon {
+    color: var(--purple);
+}
+
+
+.forecast-icon {
+    color: var(--yellow);
+}
+
+
+/* ============================================================
+   OBERE TEXTE
+============================================================ */
+
+.info-text {
+    min-width: 0;
+
+    text-align: left;
+}
+
+
+.info-label {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+
+.info-main {
+    margin-top: 2px;
+
+    color: var(--text);
+
+    font-size: 22px;
+
+    line-height: 1.05;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.info-sub {
+    margin-top: 4px;
+
+    max-width: 210px;
+
+    overflow: hidden;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
 /* ============================================================
    UNTEN
    PV | NETZ | SOC | GESAMTLIMIT
@@ -6,32 +257,38 @@
 .bottom-row {
     min-height: 0;
 
+    width: 100%;
+
     display: grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
 
-    align-items: center;
-
-    width: 100%;
+    align-items: stretch;
 }
 
 
-/* Jeder Bereich exakt gleich aufgebaut */
+/*
+ * Jeder der vier Bereiche erhält exakt dieselbe Struktur.
+ */
 
 .metric {
     min-width: 0;
     height: 100%;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    padding: 4px 8px;
+    padding:
+        4px
+        6px;
 }
 
-
-/* Trennlinien exakt zwischen den vier Bereichen */
 
 .metric + .metric {
     border-left:
@@ -41,19 +298,19 @@
 
 
 /*
- * Intern immer:
- *
- * [ Icon ] [ Label
- *            Wert ]
+ * Feste Icon-Spalte + Textspalte.
+ * Dadurch liegen PV / Netz / SOC / Gesamtlimit
+ * sauber auf derselben Achse.
  */
 
 .metric-inner {
     display: grid;
 
     grid-template-columns:
-        34px auto;
+        30px
+        auto;
 
-    column-gap: 9px;
+    column-gap: 8px;
 
     align-items: center;
 
@@ -64,20 +321,22 @@
 
 
 /* ============================================================
-   SYMBOLE
+   UNTERE SYMBOLE
 ============================================================ */
 
 .metric-icon {
-    width: 34px;
+    width: 30px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    font-size: 28px;
-    line-height: 1;
-
     text-align: center;
+
+    font-size: 26px;
+
+    line-height: 1;
 }
 
 
@@ -102,11 +361,11 @@
 
 
 /* ============================================================
-   TEXT
+   UNTERE TEXTE
 ============================================================ */
 
 .metric-text {
-    min-width: 70px;
+    min-width: 60px;
 
     text-align: left;
 }
@@ -116,6 +375,7 @@
     color: var(--muted);
 
     font-size: 11px;
+
     line-height: 1.1;
 
     white-space: nowrap;
@@ -128,6 +388,7 @@
     color: var(--text);
 
     font-size: 20px;
+
     line-height: 1.05;
 
     font-weight: 700;
@@ -142,28 +403,83 @@
 
 @media (max-height: 310px) {
 
-    .metric {
-        padding: 3px 5px;
+    .ems {
+        padding:
+            4px
+            7px;
     }
 
 
-    .metric-inner {
+    .info-block {
+        gap: 0;
+
+        padding:
+            3px
+            6px;
+    }
+
+
+    .info-inner {
         grid-template-columns:
-            27px auto;
+            28px
+            auto;
 
         column-gap: 7px;
     }
 
 
+    .big-icon {
+        width: 28px;
+        height: 28px;
+
+        font-size: 24px;
+    }
+
+
+    .info-label {
+        font-size: 10px;
+    }
+
+
+    .info-main {
+        font-size: 17px;
+    }
+
+
+    .info-sub {
+        margin-top: 2px;
+
+        max-width: 150px;
+
+        font-size: 9px;
+    }
+
+
+    .metric {
+        padding:
+            3px
+            4px;
+    }
+
+
+    .metric-inner {
+        grid-template-columns:
+            24px
+            auto;
+
+        column-gap: 6px;
+    }
+
+
     .metric-icon {
-        width: 27px;
+        width: 24px;
 
         font-size: 21px;
     }
 
 
     .metric-text {
-        min-width: 59px;
+        min-width: 52px;
     }
 
 
@@ -182,10 +498,56 @@
 
 
 /* ============================================================
-   MOBILE
+   MOBILE / SCHMAL
 ============================================================ */
 
 @media (max-width: 520px) {
+
+    .ems {
+        padding: 4px;
+    }
+
+
+    .info-block {
+        padding:
+            3px
+            4px;
+    }
+
+
+    .info-inner {
+        grid-template-columns:
+            22px
+            auto;
+
+        column-gap: 5px;
+    }
+
+
+    .big-icon {
+        width: 22px;
+        height: 22px;
+
+        font-size: 19px;
+    }
+
+
+    .info-label {
+        font-size: 8px;
+    }
+
+
+    .info-main {
+        font-size: 14px;
+    }
+
+
+    .info-sub {
+        max-width: 115px;
+
+        font-size: 8px;
+    }
+
 
     .metric {
         padding: 2px;
@@ -194,16 +556,17 @@
 
     .metric-inner {
         grid-template-columns:
-            20px auto;
+            19px
+            auto;
 
-        column-gap: 4px;
+        column-gap: 3px;
     }
 
 
     .metric-icon {
-        width: 20px;
+        width: 19px;
 
-        font-size: 18px;
+        font-size: 17px;
     }
 
 
@@ -218,6 +581,8 @@
 
 
     .metric-value {
+        margin-top: 2px;
+
         font-size: 13px;
     }
 
@@ -234,28 +599,83 @@
     (min-height: 500px)
 {
 
+    .ems {
+        padding:
+            18px
+            28px;
+    }
+
+
+    .info-block {
+        padding:
+            10px
+            25px;
+    }
+
+
+    .info-inner {
+        grid-template-columns:
+            60px
+            auto;
+
+        column-gap: 20px;
+    }
+
+
+    .big-icon {
+        width: 60px;
+        height: 60px;
+
+        font-size: 48px;
+    }
+
+
+    .info-label {
+        font-size: 17px;
+    }
+
+
+    .info-main {
+        margin-top: 5px;
+
+        font-size: 31px;
+    }
+
+
+    .info-sub {
+        margin-top: 7px;
+
+        max-width: 390px;
+
+        font-size: 15px;
+    }
+
+
     .metric {
-        padding: 10px 18px;
+        padding:
+            10px
+            15px;
     }
 
 
     .metric-inner {
         grid-template-columns:
-            50px auto;
+            48px
+            auto;
 
-        column-gap: 16px;
+        column-gap: 15px;
     }
 
 
     .metric-icon {
-        width: 50px;
+        width: 48px;
 
         font-size: 40px;
     }
 
 
     .metric-text {
-        min-width: 110px;
+        min-width: 100px;
     }
 
 
@@ -271,3 +691,646 @@
     }
 
 }
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="ems">
+
+
+    <!-- ========================================================
+         OBEN
+    ========================================================= -->
+
+    <div class="top-row">
+
+
+        <!-- NÄCHSTES ZIEL -->
+
+        <div class="info-block">
+
+            <div class="info-inner">
+
+                <div
+                    class="
+                        big-icon
+                        target-icon
+                    "
+                >
+                    ◎
+                </div>
+
+
+                <div class="info-text">
+
+                    <div class="info-label">
+                        Nächstes Ziel
+                    </div>
+
+
+                    <div
+                        class="info-main"
+                        id="target"
+                    >
+                        —
+                    </div>
+
+
+                    <div
+                        class="info-sub"
+                        id="targetSub"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- PV-PROGNOSE -->
+
+        <div class="info-block">
+
+            <div class="info-inner">
+
+                <div
+                    class="
+                        big-icon
+                        forecast-icon
+                    "
+                >
+                    ▥
+                </div>
+
+
+                <div class="info-text">
+
+                    <div class="info-label">
+                        PV-Prognose
+                    </div>
+
+
+                    <div
+                        class="info-main"
+                        id="forecast"
+                    >
+                        —
+                    </div>
+
+
+                    <div
+                        class="info-sub"
+                        id="forecastSub"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ========================================================
+         UNTEN
+    ========================================================= -->
+
+    <div class="bottom-row">
+
+
+        <!-- PV -->
+
+        <div class="metric">
+
+            <div class="metric-inner">
+
+                <div
+                    class="
+                        metric-icon
+                        pv
+                    "
+                >
+                    ☀
+                </div>
+
+
+                <div class="metric-text">
+
+                    <div class="metric-label">
+                        PV
+                    </div>
+
+
+                    <div
+                        class="metric-value"
+                        id="pv"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- NETZ -->
+
+        <div class="metric">
+
+            <div class="metric-inner">
+
+                <div
+                    class="
+                        metric-icon
+                        grid
+                    "
+                >
+                    ↔
+                </div>
+
+
+                <div class="metric-text">
+
+                    <div class="metric-label">
+                        Netz
+                    </div>
+
+
+                    <div
+                        class="metric-value"
+                        id="grid"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SOC -->
+
+        <div class="metric">
+
+            <div class="metric-inner">
+
+                <div
+                    class="
+                        metric-icon
+                        soc
+                    "
+                >
+                    ▣
+                </div>
+
+
+                <div class="metric-text">
+
+                    <div class="metric-label">
+                        SOC
+                    </div>
+
+
+                    <div
+                        class="metric-value"
+                        id="soc"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- GESAMTLIMIT -->
+
+        <div class="metric">
+
+            <div class="metric-inner">
+
+                <div
+                    class="
+                        metric-icon
+                        limit
+                    "
+                >
+                    ⚡
+                </div>
+
+
+                <div class="metric-text">
+
+                    <div class="metric-label">
+                        Gesamtlimit
+                    </div>
+
+
+                    <div
+                        class="metric-value"
+                        id="limit"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+function numeric(
+    value,
+    decimals = 1
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        Number.isNaN(
+            Number(value)
+        )
+    ) {
+        return null;
+    }
+
+
+    return Number(value)
+        .toFixed(decimals);
+}
+
+
+
+function power(value) {
+
+    const result =
+        numeric(
+            value,
+            1
+        );
+
+
+    if (result === null) {
+        return "—";
+    }
+
+
+    return (
+        result +
+        " kW"
+    );
+}
+
+
+
+function energy(value) {
+
+    const result =
+        numeric(
+            value,
+            1
+        );
+
+
+    if (result === null) {
+        return "—";
+    }
+
+
+    return (
+        result +
+        " kWh"
+    );
+}
+
+
+
+function percent(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        Number.isNaN(
+            Number(value)
+        )
+    ) {
+        return "—";
+    }
+
+
+    return (
+        Math.round(
+            Number(value)
+        ) +
+        " %"
+    );
+}
+
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        value;
+}
+
+
+
+function handleMessage(data) {
+
+    if (
+        typeof data ===
+        "string"
+    ) {
+
+        try {
+
+            data =
+                JSON.parse(
+                    data
+                );
+
+        } catch (error) {
+
+            return;
+        }
+
+    }
+
+
+    if (
+        !data ||
+        typeof data !==
+        "object"
+    ) {
+        return;
+    }
+
+
+
+    /* ========================================================
+       NÄCHSTES ZIEL
+    ========================================================= */
+
+    let targetText =
+        "—";
+
+
+    if (
+        data.targetTime !== null &&
+        data.targetTime !== undefined &&
+        data.targetTime !== "" &&
+        data.targetSOC !== null &&
+        data.targetSOC !== undefined
+    ) {
+
+        targetText =
+            String(
+                data.targetTime
+            ) +
+            " / " +
+            Math.round(
+                Number(
+                    data.targetSOC
+                )
+            ) +
+            " %";
+    }
+
+
+    setText(
+        "target",
+        targetText
+    );
+
+
+
+    let targetDetails =
+        [];
+
+
+    const need =
+        power(
+            data.socNeed
+        );
+
+
+    if (
+        need !== "—"
+    ) {
+
+        targetDetails.push(
+            "SOC-Ladebedarf " +
+            need
+        );
+    }
+
+
+    if (
+        data.consumers !== null &&
+        data.consumers !== undefined &&
+        data.consumers !== ""
+    ) {
+
+        targetDetails.push(
+            "Verbraucher " +
+            data.consumers
+        );
+    }
+
+
+    setText(
+        "targetSub",
+
+        targetDetails.length
+            ? targetDetails.join(
+                " · "
+            )
+            : "—"
+    );
+
+
+
+    /* ========================================================
+       PV-PROGNOSE
+    ========================================================= */
+
+    setText(
+        "forecast",
+        energy(
+            data.forecastEnergy
+        )
+    );
+
+
+    let forecastDetails =
+        [];
+
+
+    const peak =
+        power(
+            data.forecastPeak
+        );
+
+
+    if (
+        peak !== "—"
+    ) {
+
+        forecastDetails.push(
+            "Peak " +
+            peak
+        );
+    }
+
+
+    const duration =
+        numeric(
+            data.forecastDuration,
+            1
+        );
+
+
+    if (
+        duration !== null
+    ) {
+
+        forecastDetails.push(
+            "Dauer " +
+            duration +
+            " h"
+        );
+    }
+
+
+    setText(
+        "forecastSub",
+
+        forecastDetails.length
+            ? forecastDetails.join(
+                " · "
+            )
+            : "—"
+    );
+
+
+
+    /* ========================================================
+       UNTEN
+    ========================================================= */
+
+    setText(
+        "pv",
+        power(
+            data.pv
+        )
+    );
+
+
+    setText(
+        "grid",
+        power(
+            data.grid
+        )
+    );
+
+
+    setText(
+        "soc",
+        percent(
+            data.soc
+        )
+    );
+
+
+    setText(
+        "limit",
+        power(
+            data.limit
+        )
+    );
+
+}
+
+
+
+/* ============================================================
+   INITIALISIERUNG
+============================================================ */
+
+window.addEventListener(
+    "load",
+    function () {
+
+        if (
+            typeof requestAction ===
+            "function"
+        ) {
+
+            requestAction(
+                "Refresh",
+                true
+            );
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
