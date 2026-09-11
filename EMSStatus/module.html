@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<style>
+
+:root {
+    --bg-top: #0d2c3a;
+    --bg-bottom: #07202c;
+
+    --text: #f2f7fa;
+    --muted: #a7bdc9;
+
+    --border: rgba(103, 148, 168, 0.26);
+
+    --yellow: #ffc83d;
+    --blue: #32a7f4;
+    --green: #25da91;
+    --orange: #ff9d2d;
+    --purple: #bb70ff;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+
+/*
+ * Keine eigene Titelzeile.
+ * Den Titel "EMS Status Übersicht" zeigt Symcon bereits.
+ */
+
+.ems {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    grid-template-rows:
+        1fr
+        1fr;
+
+    overflow: hidden;
+
+    padding:
+        7px
+        10px
+        8px
+        10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--bg-top),
+            var(--bg-bottom)
+        );
+}
+
+
+/* ==========================================================
+   OBEN:
+   Nächstes Ziel | PV-Prognose
+========================================================== */
+
+.top-row {
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    align-items: center;
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.info-block {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        5px
+        18px;
+}
+
+
+.info-block + .info-block {
+    border-left:
+        1px solid
+        var(--border);
+}
+
+
+.big-icon {
+    flex:
+        0 0 43px;
+
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 34px;
+
+    line-height: 1;
+}
+
+
+.target-icon {
+    color: var(--purple);
+}
+
+
+.forecast-icon {
+    color: var(--yellow);
+}
+
+
+.info-text {
+    min-width: 0;
+}
+
+
+.info-label {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+
+.info-main {
+    margin-top: 2px;
+
+    font-size: 22px;
+
+    line-height: 1.05;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.info-sub {
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================================
+   UNTEN:
+   PV | Netz | SOC | Gesamtlimit
+========================================================== */
+
+.bottom-row {
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    align-items: center;
+}
+
+
+.metric {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding:
+        5px
+        14px;
+}
+
+
+.metric + .metric {
+    border-left:
+        1px solid
+        var(--border);
+}
+
+
+.metric-icon {
+    flex:
+        0 0 32px;
+
+    width: 32px;
+
+    text-align: center;
+
+    font-size: 28px;
+
+    line-height: 1;
+}
+
+
+.metric-icon.pv {
+    color: var(--yellow);
+}
+
+
+.metric-icon.grid {
+    color: var(--blue);
+}
+
+
+.metric-icon.soc {
+    color: var(--green);
+}
+
+
+.metric-icon.limit {
+    color: var(--orange);
+}
+
+
+.metric-text {
+    min-width: 0;
+}
+
+
+.metric-label {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+
+.metric-value {
+    margin-top: 2px;
+
+    font-size: 20px;
+
+    line-height: 1.05;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   NORMALE DESKTOP-KACHEL
+========================================================== */
+
+@media (max-height: 310px) {
+
+    .ems {
+        padding:
+            4px
+            7px;
+    }
+
+
+    .info-block {
+        gap: 7px;
+
+        padding:
+            3px
+            9px;
+    }
+
+
+    .big-icon {
+        flex-basis: 29px;
+
+        width: 29px;
+        height: 29px;
+
+        font-size: 25px;
+    }
+
+
+    .info-label {
+        font-size: 10px;
+    }
+
+
+    .info-main {
+        font-size: 17px;
+    }
+
+
+    .info-sub {
+        margin-top: 2px;
+
+        font-size: 9px;
+    }
+
+
+    .metric {
+        gap: 6px;
+
+        padding:
+            3px
+            8px;
+    }
+
+
+    .metric-icon {
+        flex-basis: 23px;
+
+        width: 23px;
+
+        font-size: 21px;
+    }
+
+
+    .metric-label {
+        font-size: 9px;
+    }
+
+
+    .metric-value {
+        font-size: 16px;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE / SEHR SCHMAL
+========================================================== */
+
+@media (max-width: 520px) {
+
+    .ems {
+        padding: 4px;
+    }
+
+
+    .info-block {
+        gap: 5px;
+
+        padding:
+            3px
+            5px;
+    }
+
+
+    .big-icon {
+        flex-basis: 21px;
+
+        width: 21px;
+        height: 21px;
+
+        font-size: 19px;
+    }
+
+
+    .info-label {
+        font-size: 8px;
+    }
+
+
+    .info-main {
+        font-size: 14px;
+    }
+
+
+    .info-sub {
+        font-size: 8px;
+    }
+
+
+    .metric {
+        display: block;
+
+        padding: 3px;
+
+        text-align: center;
+    }
+
+
+    .metric-icon {
+        margin:
+            0 auto
+            2px auto;
+
+        width: auto;
+
+        font-size: 18px;
+    }
+
+
+    .metric-label {
+        font-size: 8px;
+    }
+
+
+    .metric-value {
+        margin-top: 1px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+/* ==========================================================
+   GROSSE / GEÖFFNETE ANSICHT
+
+   Gleicher Inhalt.
+   Nur grösser und luftiger.
+========================================================== */
+
+@media
+    (min-width: 900px)
+    and
+    (min-height: 500px)
+{
+
+    .ems {
+        padding:
+            18px
+            28px;
+    }
+
+
+    .info-block {
+        gap: 22px;
+
+        padding:
+            10px
+            35px;
+    }
+
+
+    .big-icon {
+        flex-basis: 60px;
+
+        width: 60px;
+        height: 60px;
+
+        font-size: 48px;
+    }
+
+
+    .info-label {
+        font-size: 17px;
+    }
+
+
+    .info-main {
+        margin-top: 5px;
+
+        font-size: 31px;
+    }
+
+
+    .info-sub {
+        margin-top: 7px;
+
+        font-size: 15px;
+    }
+
+
+    .metric {
+        gap: 18px;
+
+        padding:
+            10px
+            28px;
+    }
+
+
+    .metric-icon {
+        flex-basis: 46px;
+
+        width: 46px;
+
+        font-size: 40px;
+    }
+
+
+    .metric-label {
+        font-size: 16px;
+    }
+
+
+    .metric-value {
+        margin-top: 5px;
+
+        font-size: 29px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="ems">
+
+
+    <!-- =====================================================
+         OBEN
+    ====================================================== -->
+
+    <div class="top-row">
+
+
+        <!-- NÄCHSTES ZIEL -->
+
+        <div class="info-block">
+
+            <div
+                class="
+                    big-icon
+                    target-icon
+                "
+            >
+                ◎
+            </div>
+
+
+            <div class="info-text">
+
+                <div class="info-label">
+                    Nächstes Ziel
+                </div>
+
+
+                <div
+                    class="info-main"
+                    id="target"
+                >
+                    —
+                </div>
+
+
+                <div
+                    class="info-sub"
+                    id="targetSub"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- PV-PROGNOSE -->
+
+        <div class="info-block">
+
+            <div
+                class="
+                    big-icon
+                    forecast-icon
+                "
+            >
+                ▥
+            </div>
+
+
+            <div class="info-text">
+
+                <div class="info-label">
+                    PV-Prognose
+                </div>
+
+
+                <div
+                    class="info-main"
+                    id="forecast"
+                >
+                    —
+                </div>
+
+
+                <div
+                    class="info-sub"
+                    id="forecastSub"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         UNTEN
+    ====================================================== -->
+
+    <div class="bottom-row">
+
+
+        <!-- PV -->
+
+        <div class="metric">
+
+            <div
+                class="
+                    metric-icon
+                    pv
+                "
+            >
+                ☀
+            </div>
+
+
+            <div class="metric-text">
+
+                <div class="metric-label">
+                    PV
+                </div>
+
+
+                <div
+                    class="metric-value"
+                    id="pv"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- NETZ -->
+
+        <div class="metric">
+
+            <div
+                class="
+                    metric-icon
+                    grid
+                "
+            >
+                ↔
+            </div>
+
+
+            <div class="metric-text">
+
+                <div class="metric-label">
+                    Netz
+                </div>
+
+
+                <div
+                    class="metric-value"
+                    id="grid"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SOC -->
+
+        <div class="metric">
+
+            <div
+                class="
+                    metric-icon
+                    soc
+                "
+            >
+                ▣
+            </div>
+
+
+            <div class="metric-text">
+
+                <div class="metric-label">
+                    SOC
+                </div>
+
+
+                <div
+                    class="metric-value"
+                    id="soc"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- GESAMTLIMIT -->
+
+        <div class="metric">
+
+            <div
+                class="
+                    metric-icon
+                    limit
+                "
+            >
+                ⚡
+            </div>
+
+
+            <div class="metric-text">
+
+                <div class="metric-label">
+                    Gesamtlimit
+                </div>
+
+
+                <div
+                    class="metric-value"
+                    id="limit"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+function numeric(
+    value,
+    decimals = 1
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        Number.isNaN(
+            Number(value)
+        )
+    ) {
+        return null;
+    }
+
+
+    return Number(value)
+        .toFixed(decimals);
+}
+
+
+
+function power(value) {
+
+    const valueText =
+        numeric(
+            value,
+            1
+        );
+
+
+    if (valueText === null) {
+        return "—";
+    }
+
+
+    return (
+        valueText +
+        " kW"
+    );
+}
+
+
+
+function energy(value) {
+
+    const valueText =
+        numeric(
+            value,
+            1
+        );
+
+
+    if (valueText === null) {
+        return "—";
+    }
+
+
+    return (
+        valueText +
+        " kWh"
+    );
+}
+
+
+
+function percent(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        Number.isNaN(
+            Number(value)
+        )
+    ) {
+        return "—";
+    }
+
+
+    return (
+        Math.round(
+            Number(value)
+        ) +
+        " %"
+    );
+}
+
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        value;
+}
+
+
+
+function handleMessage(data) {
+
+    /*
+     * IP-Symcon kann JSON als String
+     * oder direkt als Objekt übergeben.
+     */
+
+    if (
+        typeof data ===
+        "string"
+    ) {
+
+        try {
+
+            data =
+                JSON.parse(
+                    data
+                );
+
+        } catch (error) {
+
+            return;
+        }
+
+    }
+
+
+    if (
+        !data ||
+        typeof data !==
+        "object"
+    ) {
+        return;
+    }
+
+
+
+    /* =====================================================
+       NÄCHSTES ZIEL
+    ====================================================== */
+
+    let target =
+        "—";
+
+
+    if (
+        data.targetTime !== null &&
+        data.targetTime !== undefined &&
+        data.targetTime !== "" &&
+        data.targetSOC !== null &&
+        data.targetSOC !== undefined
+    ) {
+
+        target =
+            String(
+                data.targetTime
+            ) +
+            " / " +
+            Math.round(
+                Number(
+                    data.targetSOC
+                )
+            ) +
+            " %";
+    }
+
+
+    setText(
+        "target",
+        target
+    );
+
+
+
+    let targetDetails =
+        [];
+
+
+    const need =
+        power(
+            data.socNeed
+        );
+
+
+    if (
+        need !== "—"
+    ) {
+
+        targetDetails.push(
+            "SOC-Ladebedarf " +
+            need
+        );
+    }
+
+
+    if (
+        data.consumers !== null &&
+        data.consumers !== undefined &&
+        data.consumers !== ""
+    ) {
+
+        targetDetails.push(
+            "Verbraucher " +
+            data.consumers
+        );
+    }
+
+
+    setText(
+        "targetSub",
+
+        targetDetails.length
+            ? targetDetails.join(
+                " · "
+            )
+            : "—"
+    );
+
+
+
+    /* =====================================================
+       PV-PROGNOSE
+    ====================================================== */
+
+    setText(
+        "forecast",
+        energy(
+            data.forecastEnergy
+        )
+    );
+
+
+    let forecastDetails =
+        [];
+
+
+    const peak =
+        power(
+            data.forecastPeak
+        );
+
+
+    if (
+        peak !== "—"
+    ) {
+
+        forecastDetails.push(
+            "Peak " +
+            peak
+        );
+    }
+
+
+    const duration =
+        numeric(
+            data.forecastDuration,
+            1
+        );
+
+
+    if (
+        duration !== null
+    ) {
+
+        forecastDetails.push(
+            "Dauer " +
+            duration +
+            " h"
+        );
+    }
+
+
+    setText(
+        "forecastSub",
+
+        forecastDetails.length
+            ? forecastDetails.join(
+                " · "
+            )
+            : "—"
+    );
+
+
+
+    /* =====================================================
+       UNTEN
+    ====================================================== */
+
+    setText(
+        "pv",
+        power(
+            data.pv
+        )
+    );
+
+
+    setText(
+        "grid",
+        power(
+            data.grid
+        )
+    );
+
+
+    setText(
+        "soc",
+        percent(
+            data.soc
+        )
+    );
+
+
+    setText(
+        "limit",
+        power(
+            data.limit
+        )
+    );
+
+}
+
+
+
+/*
+ * =========================================================
+ * INITIALISIERUNG
+ * =========================================================
+ */
+
+window.addEventListener(
+    "load",
+    function () {
+
+        if (
+            typeof requestAction ===
+            "function"
+        ) {
+
+            requestAction(
+                "Refresh",
+                true
+            );
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
