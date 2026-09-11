@@ -4,42 +4,30 @@ declare(strict_types=1);
 
 class EMSStatus extends IPSModule
 {
+    /*
+     * ============================================================
+     * BESTEHENDE EMS-STATUSQUELLE
+     * ============================================================
+     *
+     * Diese Variable enthält bereits die aufbereitete
+     * EMS-Statusübersicht.
+     *
+     * Dadurch bauen wir die bestehende EMS-Logik NICHT nochmals
+     * nach und müssen keine neuen Datenpunkt-IDs erraten.
+     */
+
+    private const EMS_STATUS_ID = 19206;
+
+
     public function Create(): void
     {
         parent::Create();
 
         /*
-         * =========================================================
-         * FEST BESTÄTIGTE DATENPUNKTE
-         * =========================================================
-         */
-
-        $this->RegisterPropertyInteger('PVPowerID', 24848);
-        $this->RegisterPropertyInteger('GridPowerID', 36592);
-        $this->RegisterPropertyInteger('SOCID', 46752);
-
-
-        /*
-         * =========================================================
-         * NOCH ZUZUORDNENDE EMS-WERTE
-         * =========================================================
-         */
-
-        $this->RegisterPropertyInteger('TotalLimitID', 0);
-
-        $this->RegisterPropertyInteger('TargetTimeID', 0);
-        $this->RegisterPropertyInteger('TargetSOCID', 0);
-        $this->RegisterPropertyInteger('SOCPowerNeedID', 0);
-        $this->RegisterPropertyInteger('ConsumerCountID', 0);
-
-        $this->RegisterPropertyInteger('ForecastEnergyID', 0);
-        $this->RegisterPropertyInteger('ForecastPeakID', 0);
-        $this->RegisterPropertyInteger('ForecastDurationID', 0);
-
-
-        /*
          * Native SDK-Visualisierung.
-         * HTML bleibt stehen, nur Werte ändern sich.
+         *
+         * module.html wird einmal geladen.
+         * Danach werden nur noch Werte übertragen.
          */
 
         $this->SetVisualizationType(1);
@@ -50,21 +38,23 @@ class EMSStatus extends IPSModule
     {
         parent::ApplyChanges();
 
-        foreach ($this->GetObservedIDs() as $id) {
+        /*
+         * Bestehende EMS-Statusvariable beobachten.
+         */
 
-            if (
-                $id > 0 &&
-                IPS_VariableExists($id)
-            ) {
+        if (IPS_VariableExists(self::EMS_STATUS_ID)) {
 
-                $this->RegisterMessage(
-                    $id,
-                    VM_UPDATE
-                );
-            }
+            $this->RegisterMessage(
+                self::EMS_STATUS_ID,
+                VM_UPDATE
+            );
         }
     }
 
+
+    /* ============================================================
+       VISUALISIERUNG
+    ============================================================ */
 
     public function GetVisualizationTile(): string
     {
@@ -84,9 +74,7 @@ class EMSStatus extends IPSModule
 
 
         $html =
-            file_get_contents(
-                $file
-            );
+            file_get_contents($file);
 
 
         if ($html === false) {
@@ -101,6 +89,10 @@ class EMSStatus extends IPSModule
         return $html;
     }
 
+
+    /* ============================================================
+       MESSAGE SINK
+    ============================================================ */
 
     public function MessageSink(
         $TimeStamp,
@@ -117,12 +109,19 @@ class EMSStatus extends IPSModule
         );
 
 
-        if ($Message === VM_UPDATE) {
+        if (
+            $Message === VM_UPDATE &&
+            $SenderID === self::EMS_STATUS_ID
+        ) {
 
             $this->SendLiveValues();
         }
     }
 
+
+    /* ============================================================
+       REQUEST ACTION
+    ============================================================ */
 
     public function RequestAction(
         $Ident,
@@ -138,95 +137,146 @@ class EMSStatus extends IPSModule
 
 
         throw new Exception(
-            'Invalid Ident'
+            'Invalid Ident: ' .
+            $Ident
         );
     }
 
 
-    private function GetObservedIDs(): array
+    /* ============================================================
+       STATUSQUELLE LESEN
+    ============================================================ */
+
+    private function ReadEMSStatus(): string
     {
-        return [
+        if (!IPS_VariableExists(self::EMS_STATUS_ID)) {
 
-            $this->ReadPropertyInteger(
-                'PVPowerID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'GridPowerID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'SOCID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'TotalLimitID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'TargetTimeID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'TargetSOCID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'SOCPowerNeedID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'ConsumerCountID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'ForecastEnergyID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'ForecastPeakID'
-            ),
-
-            $this->ReadPropertyInteger(
-                'ForecastDurationID'
-            )
-        ];
-    }
-
-
-    private function ReadSafe(
-        int $id,
-        mixed $default = null
-    ): mixed {
-
-        if (
-            $id <= 0 ||
-            !IPS_VariableExists($id)
-        ) {
-
-            return $default;
+            return '';
         }
 
 
-        return GetValue($id);
-    }
-
-
-    private function ReadFloat(
-        int $id
-    ): ?float {
-
         $value =
-            $this->ReadSafe(
-                $id,
-                null
+            GetValue(
+                self::EMS_STATUS_ID
             );
 
 
+        if (!is_string($value)) {
+
+            $value =
+                (string) $value;
+        }
+
+
+        /*
+         * Falls die alte Statusvariable HTML enthält:
+         *
+         * Zeilenumbrüche vor dem Entfernen der Tags erhalten.
+         */
+
+        $value =
+            preg_replace(
+                '/<br\s*\/?>/i',
+                "\n",
+                $value
+            );
+
+
+        $value =
+            preg_replace(
+                '/<\/(div|p|li|tr|h1|h2|h3|strong)>/i',
+                "$0\n",
+                $value
+            );
+
+
+        $value =
+            strip_tags(
+                $value
+            );
+
+
+        $value =
+            html_entity_decode(
+                $value,
+                ENT_QUOTES |
+                ENT_HTML5,
+                'UTF-8'
+            );
+
+
+        /*
+         * Geschützte Leerzeichen normalisieren.
+         */
+
+        $value =
+            str_replace(
+                "\xC2\xA0",
+                ' ',
+                $value
+            );
+
+
+        /*
+         * Mehrfache Leerzeichen reduzieren.
+         */
+
+        $value =
+            preg_replace(
+                '/[ \t]+/',
+                ' ',
+                $value
+            );
+
+
+        /*
+         * Mehrere Leerzeilen reduzieren.
+         */
+
+        $value =
+            preg_replace(
+                "/\n[ \t]*\n+/",
+                "\n",
+                $value
+            );
+
+
+        return trim(
+            $value
+        );
+    }
+
+
+    /* ============================================================
+       REGEX HELPERS
+    ============================================================ */
+
+    private function ExtractFloat(
+        string $text,
+        string $pattern
+    ): ?float {
+
         if (
-            $value === null ||
-            !is_numeric($value)
+            preg_match(
+                $pattern,
+                $text,
+                $match
+            ) !== 1
         ) {
+
+            return null;
+        }
+
+
+        $value =
+            str_replace(
+                ',',
+                '.',
+                $match[1]
+            );
+
+
+        if (!is_numeric($value)) {
 
             return null;
         }
@@ -236,132 +286,322 @@ class EMSStatus extends IPSModule
     }
 
 
-    private function ReadInteger(
-        int $id
+    private function ExtractInteger(
+        string $text,
+        string $pattern
     ): ?int {
 
-        $value =
-            $this->ReadSafe(
-                $id,
-                null
-            );
-
-
         if (
-            $value === null ||
-            !is_numeric($value)
+            preg_match(
+                $pattern,
+                $text,
+                $match
+            ) !== 1
         ) {
 
             return null;
         }
 
 
-        return (int) $value;
-    }
-
-
-    private function ReadString(
-        int $id
-    ): ?string {
-
-        $value =
-            $this->ReadSafe(
-                $id,
-                null
-            );
-
-
-        if ($value === null) {
+        if (!is_numeric($match[1])) {
 
             return null;
         }
 
 
-        return (string) $value;
+        return (int) $match[1];
     }
 
 
-    private function SendLiveValues(): void
-    {
-        $payload = [
+    private function ExtractString(
+        string $text,
+        string $pattern
+    ): ?string {
+
+        if (
+            preg_match(
+                $pattern,
+                $text,
+                $match
+            ) !== 1
+        ) {
+
+            return null;
+        }
+
+
+        return trim(
+            $match[1]
+        );
+    }
+
+
+    /* ============================================================
+       EMS STATUS ZERLEGEN
+    ============================================================ */
+
+    private function ParseEMSStatus(
+        string $text
+    ): array {
+
+        /*
+         * --------------------------------------------------------
+         * PV aktuell
+         *
+         * Beispiel:
+         * PV 1.7 kW
+         * --------------------------------------------------------
+         */
+
+        $pv =
+            $this->ExtractFloat(
+                $text,
+                '/\bPV\s+(-?\d+(?:[.,]\d+)?)\s*kW\b/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Netz
+         *
+         * Alte Statusanzeige unterscheidet:
+         *
+         * Einspeisung 0.1 kW
+         * Netzbezug 0.1 kW
+         *
+         * Unsere neue Darstellung:
+         *
+         * Einspeisung = negativ
+         * Bezug        = positiv
+         * --------------------------------------------------------
+         */
+
+        $grid = null;
+
+
+        $export =
+            $this->ExtractFloat(
+                $text,
+                '/Einspeisung\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
+            );
+
+
+        if ($export !== null) {
+
+            $grid =
+                -abs($export);
+        }
+
+
+        if ($grid === null) {
+
+            $import =
+                $this->ExtractFloat(
+                    $text,
+                    '/Netzbezug\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
+                );
+
+
+            if ($import !== null) {
+
+                $grid =
+                    abs($import);
+            }
+        }
+
+
+        /*
+         * --------------------------------------------------------
+         * SOC
+         * --------------------------------------------------------
+         */
+
+        $soc =
+            $this->ExtractFloat(
+                $text,
+                '/\bSOC\s+(-?\d+(?:[.,]\d+)?)\s*%/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Gesamtlimit
+         * --------------------------------------------------------
+         */
+
+        $limit =
+            $this->ExtractFloat(
+                $text,
+                '/Gesamtlimit\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Nächstes Ziel
+         *
+         * Beispiel:
+         *
+         * Nächstes Ziel 17:00 / 100%
+         * --------------------------------------------------------
+         */
+
+        $targetTime =
+            $this->ExtractString(
+                $text,
+                '/N[aä]chstes\s+Ziel\s+([0-2]?\d:[0-5]\d)/iu'
+            );
+
+
+        $targetSOC =
+            $this->ExtractFloat(
+                $text,
+                '/N[aä]chstes\s+Ziel\s+[0-2]?\d:[0-5]\d\s*\/\s*(-?\d+(?:[.,]\d+)?)\s*%/iu'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * SOC-Ladebedarf
+         * --------------------------------------------------------
+         */
+
+        $socNeed =
+            $this->ExtractFloat(
+                $text,
+                '/SOC-Ladebedarf\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Verbraucher
+         * --------------------------------------------------------
+         */
+
+        $consumers =
+            $this->ExtractInteger(
+                $text,
+                '/Verbraucher\s+(\d+)/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * PV-Prognose
+         * --------------------------------------------------------
+         */
+
+        $forecastEnergy =
+            $this->ExtractFloat(
+                $text,
+                '/PV-Prognose\s+(-?\d+(?:[.,]\d+)?)\s*kWh/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Peak
+         * --------------------------------------------------------
+         */
+
+        $forecastPeak =
+            $this->ExtractFloat(
+                $text,
+                '/Peak\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
+            );
+
+
+        /*
+         * --------------------------------------------------------
+         * Dauer
+         * --------------------------------------------------------
+         */
+
+        $forecastDuration =
+            $this->ExtractFloat(
+                $text,
+                '/Dauer\s+(-?\d+(?:[.,]\d+)?)\s*h/i'
+            );
+
+
+        return [
 
             'pv' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'PVPowerID'
-                    )
-                ),
+                $pv,
 
             'grid' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'GridPowerID'
-                    )
-                ),
+                $grid,
 
             'soc' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'SOCID'
-                    )
-                ),
+                $soc,
 
             'limit' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'TotalLimitID'
-                    )
-                ),
+                $limit,
 
             'targetTime' =>
-                $this->ReadString(
-                    $this->ReadPropertyInteger(
-                        'TargetTimeID'
-                    )
-                ),
+                $targetTime,
 
             'targetSOC' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'TargetSOCID'
-                    )
-                ),
+                $targetSOC,
 
             'socNeed' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'SOCPowerNeedID'
-                    )
-                ),
+                $socNeed,
 
             'consumers' =>
-                $this->ReadInteger(
-                    $this->ReadPropertyInteger(
-                        'ConsumerCountID'
-                    )
-                ),
+                $consumers,
 
             'forecastEnergy' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'ForecastEnergyID'
-                    )
-                ),
+                $forecastEnergy,
 
             'forecastPeak' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'ForecastPeakID'
-                    )
-                ),
+                $forecastPeak,
 
             'forecastDuration' =>
-                $this->ReadFloat(
-                    $this->ReadPropertyInteger(
-                        'ForecastDurationID'
-                    )
-                )
+                $forecastDuration
+
         ];
+    }
+
+
+    /* ============================================================
+       DATEN SENDEN
+    ============================================================ */
+
+    private function SendLiveValues(): void
+    {
+        $text =
+            $this->ReadEMSStatus();
+
+
+        if ($text === '') {
+
+            $payload = [
+
+                'pv' => null,
+                'grid' => null,
+                'soc' => null,
+                'limit' => null,
+
+                'targetTime' => null,
+                'targetSOC' => null,
+
+                'socNeed' => null,
+                'consumers' => null,
+
+                'forecastEnergy' => null,
+                'forecastPeak' => null,
+                'forecastDuration' => null
+
+            ];
+
+        } else {
+
+            $payload =
+                $this->ParseEMSStatus(
+                    $text
+                );
+        }
 
 
         $json =
@@ -376,6 +616,12 @@ class EMSStatus extends IPSModule
             return;
         }
 
+
+        /*
+         * Nur Werte aktualisieren.
+         *
+         * Die HTML-Kachel wird NICHT neu aufgebaut.
+         */
 
         $this->UpdateVisualizationValue(
             $json
