@@ -9,14 +9,22 @@ class EMSStatus extends IPSModule
         parent::Create();
 
         /*
-         * Datenpunkte.
-         * Vorerst über die Instanz konfigurierbar,
-         * damit keine falschen IDs fest eingebaut werden.
+         * =========================================================
+         * FEST BESTÄTIGTE DATENPUNKTE
+         * =========================================================
          */
 
-        $this->RegisterPropertyInteger('PVPowerID', 0);
-        $this->RegisterPropertyInteger('GridPowerID', 0);
-        $this->RegisterPropertyInteger('SOCID', 0);
+        $this->RegisterPropertyInteger('PVPowerID', 24848);
+        $this->RegisterPropertyInteger('GridPowerID', 36592);
+        $this->RegisterPropertyInteger('SOCID', 46752);
+
+
+        /*
+         * =========================================================
+         * NOCH ZUZUORDNENDE EMS-WERTE
+         * =========================================================
+         */
+
         $this->RegisterPropertyInteger('TotalLimitID', 0);
 
         $this->RegisterPropertyInteger('TargetTimeID', 0);
@@ -28,9 +36,10 @@ class EMSStatus extends IPSModule
         $this->RegisterPropertyInteger('ForecastPeakID', 0);
         $this->RegisterPropertyInteger('ForecastDurationID', 0);
 
+
         /*
          * Native SDK-Visualisierung.
-         * Dadurch wird nicht ständig das ganze HTML neu geladen.
+         * HTML bleibt stehen, nur Werte ändern sich.
          */
 
         $this->SetVisualizationType(1);
@@ -42,7 +51,12 @@ class EMSStatus extends IPSModule
         parent::ApplyChanges();
 
         foreach ($this->GetObservedIDs() as $id) {
-            if ($id > 0 && IPS_VariableExists($id)) {
+
+            if (
+                $id > 0 &&
+                IPS_VariableExists($id)
+            ) {
+
                 $this->RegisterMessage(
                     $id,
                     VM_UPDATE
@@ -59,15 +73,30 @@ class EMSStatus extends IPSModule
             DIRECTORY_SEPARATOR .
             'module.html';
 
+
         if (!file_exists($file)) {
-            return '<div style="padding:20px;">module.html wurde nicht gefunden.</div>';
+
+            return
+                '<div style="padding:20px;">' .
+                'module.html wurde nicht gefunden.' .
+                '</div>';
         }
 
-        $html = file_get_contents($file);
+
+        $html =
+            file_get_contents(
+                $file
+            );
+
 
         if ($html === false) {
-            return '<div style="padding:20px;">module.html konnte nicht gelesen werden.</div>';
+
+            return
+                '<div style="padding:20px;">' .
+                'module.html konnte nicht gelesen werden.' .
+                '</div>';
         }
+
 
         return $html;
     }
@@ -79,6 +108,7 @@ class EMSStatus extends IPSModule
         $Message,
         $Data
     ): void {
+
         parent::MessageSink(
             $TimeStamp,
             $SenderID,
@@ -86,7 +116,9 @@ class EMSStatus extends IPSModule
             $Data
         );
 
+
         if ($Message === VM_UPDATE) {
+
             $this->SendLiveValues();
         }
     }
@@ -96,31 +128,68 @@ class EMSStatus extends IPSModule
         $Ident,
         $Value
     ): void {
+
         if ($Ident === 'Refresh') {
+
             $this->SendLiveValues();
+
             return;
         }
 
-        throw new Exception('Invalid Ident');
+
+        throw new Exception(
+            'Invalid Ident'
+        );
     }
 
 
     private function GetObservedIDs(): array
     {
         return [
-            $this->ReadPropertyInteger('PVPowerID'),
-            $this->ReadPropertyInteger('GridPowerID'),
-            $this->ReadPropertyInteger('SOCID'),
-            $this->ReadPropertyInteger('TotalLimitID'),
 
-            $this->ReadPropertyInteger('TargetTimeID'),
-            $this->ReadPropertyInteger('TargetSOCID'),
-            $this->ReadPropertyInteger('SOCPowerNeedID'),
-            $this->ReadPropertyInteger('ConsumerCountID'),
+            $this->ReadPropertyInteger(
+                'PVPowerID'
+            ),
 
-            $this->ReadPropertyInteger('ForecastEnergyID'),
-            $this->ReadPropertyInteger('ForecastPeakID'),
-            $this->ReadPropertyInteger('ForecastDurationID')
+            $this->ReadPropertyInteger(
+                'GridPowerID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'SOCID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'TotalLimitID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'TargetTimeID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'TargetSOCID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'SOCPowerNeedID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'ConsumerCountID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'ForecastEnergyID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'ForecastPeakID'
+            ),
+
+            $this->ReadPropertyInteger(
+                'ForecastDurationID'
+            )
         ];
     }
 
@@ -129,13 +198,15 @@ class EMSStatus extends IPSModule
         int $id,
         mixed $default = null
     ): mixed {
-        if ($id <= 0) {
+
+        if (
+            $id <= 0 ||
+            !IPS_VariableExists($id)
+        ) {
+
             return $default;
         }
 
-        if (!IPS_VariableExists($id)) {
-            return $default;
-        }
 
         return GetValue($id);
     }
@@ -144,11 +215,22 @@ class EMSStatus extends IPSModule
     private function ReadFloat(
         int $id
     ): ?float {
-        $value = $this->ReadSafe($id, null);
 
-        if ($value === null || !is_numeric($value)) {
+        $value =
+            $this->ReadSafe(
+                $id,
+                null
+            );
+
+
+        if (
+            $value === null ||
+            !is_numeric($value)
+        ) {
+
             return null;
         }
+
 
         return (float) $value;
     }
@@ -157,11 +239,22 @@ class EMSStatus extends IPSModule
     private function ReadInteger(
         int $id
     ): ?int {
-        $value = $this->ReadSafe($id, null);
 
-        if ($value === null || !is_numeric($value)) {
+        $value =
+            $this->ReadSafe(
+                $id,
+                null
+            );
+
+
+        if (
+            $value === null ||
+            !is_numeric($value)
+        ) {
+
             return null;
         }
+
 
         return (int) $value;
     }
@@ -170,11 +263,19 @@ class EMSStatus extends IPSModule
     private function ReadString(
         int $id
     ): ?string {
-        $value = $this->ReadSafe($id, null);
+
+        $value =
+            $this->ReadSafe(
+                $id,
+                null
+            );
+
 
         if ($value === null) {
+
             return null;
         }
+
 
         return (string) $value;
     }
@@ -183,66 +284,101 @@ class EMSStatus extends IPSModule
     private function SendLiveValues(): void
     {
         $payload = [
-            'pv' => $this->ReadFloat(
-                $this->ReadPropertyInteger('PVPowerID')
-            ),
 
-            'grid' => $this->ReadFloat(
-                $this->ReadPropertyInteger('GridPowerID')
-            ),
+            'pv' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'PVPowerID'
+                    )
+                ),
 
-            'soc' => $this->ReadFloat(
-                $this->ReadPropertyInteger('SOCID')
-            ),
+            'grid' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'GridPowerID'
+                    )
+                ),
 
-            'limit' => $this->ReadFloat(
-                $this->ReadPropertyInteger('TotalLimitID')
-            ),
+            'soc' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'SOCID'
+                    )
+                ),
 
-            'targetTime' => $this->ReadString(
-                $this->ReadPropertyInteger('TargetTimeID')
-            ),
+            'limit' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'TotalLimitID'
+                    )
+                ),
 
-            'targetSOC' => $this->ReadFloat(
-                $this->ReadPropertyInteger('TargetSOCID')
-            ),
+            'targetTime' =>
+                $this->ReadString(
+                    $this->ReadPropertyInteger(
+                        'TargetTimeID'
+                    )
+                ),
 
-            'socNeed' => $this->ReadFloat(
-                $this->ReadPropertyInteger('SOCPowerNeedID')
-            ),
+            'targetSOC' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'TargetSOCID'
+                    )
+                ),
 
-            'consumers' => $this->ReadInteger(
-                $this->ReadPropertyInteger('ConsumerCountID')
-            ),
+            'socNeed' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'SOCPowerNeedID'
+                    )
+                ),
 
-            'forecastEnergy' => $this->ReadFloat(
-                $this->ReadPropertyInteger('ForecastEnergyID')
-            ),
+            'consumers' =>
+                $this->ReadInteger(
+                    $this->ReadPropertyInteger(
+                        'ConsumerCountID'
+                    )
+                ),
 
-            'forecastPeak' => $this->ReadFloat(
-                $this->ReadPropertyInteger('ForecastPeakID')
-            ),
+            'forecastEnergy' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'ForecastEnergyID'
+                    )
+                ),
 
-            'forecastDuration' => $this->ReadFloat(
-                $this->ReadPropertyInteger('ForecastDurationID')
-            )
+            'forecastPeak' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'ForecastPeakID'
+                    )
+                ),
+
+            'forecastDuration' =>
+                $this->ReadFloat(
+                    $this->ReadPropertyInteger(
+                        'ForecastDurationID'
+                    )
+                )
         ];
 
-        $json = json_encode(
-            $payload,
-            JSON_UNESCAPED_UNICODE |
-            JSON_UNESCAPED_SLASHES
-        );
+
+        $json =
+            json_encode(
+                $payload,
+                JSON_UNESCAPED_UNICODE |
+                JSON_UNESCAPED_SLASHES
+            );
+
 
         if ($json === false) {
             return;
         }
 
-        /*
-         * Nur Werte aktualisieren.
-         * Kein komplettes Neuladen der Kachel.
-         */
 
-        $this->UpdateVisualizationValue($json);
+        $this->UpdateVisualizationValue(
+            $json
+        );
     }
 }
