@@ -1,0 +1,13 @@
+{
+    "id": "{8D8333D1-B02E-44DB-90B2-ACD452890603}",
+    "name": "EMSStatus",
+    "type": 3,
+    "vendor": "Sulzbann",
+    "aliases": [
+        "EMS Status Übersicht"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SULZEMS"
+}
