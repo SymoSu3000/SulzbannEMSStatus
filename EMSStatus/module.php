@@ -5,30 +5,15 @@ declare(strict_types=1);
 class EMSStatus extends IPSModule
 {
     /*
-     * ============================================================
-     * BESTEHENDE EMS-STATUSQUELLE
-     * ============================================================
-     *
-     * Diese Variable enthält bereits die aufbereitete
-     * EMS-Statusübersicht.
-     *
-     * Dadurch bauen wir die bestehende EMS-Logik NICHT nochmals
-     * nach und müssen keine neuen Datenpunkt-IDs erraten.
+     * Bestehende EMS-Statusübersicht.
+     * Daraus übernehmen wir weiterhin die bereits berechneten Werte.
      */
-
     private const EMS_STATUS_ID = 19206;
 
 
     public function Create(): void
     {
         parent::Create();
-
-        /*
-         * Native SDK-Visualisierung.
-         *
-         * module.html wird einmal geladen.
-         * Danach werden nur noch Werte übertragen.
-         */
 
         $this->SetVisualizationType(1);
     }
@@ -38,12 +23,7 @@ class EMSStatus extends IPSModule
     {
         parent::ApplyChanges();
 
-        /*
-         * Bestehende EMS-Statusvariable beobachten.
-         */
-
         if (IPS_VariableExists(self::EMS_STATUS_ID)) {
-
             $this->RegisterMessage(
                 self::EMS_STATUS_ID,
                 VM_UPDATE
@@ -52,10 +32,6 @@ class EMSStatus extends IPSModule
     }
 
 
-    /* ============================================================
-       VISUALISIERUNG
-    ============================================================ */
-
     public function GetVisualizationTile(): string
     {
         $file =
@@ -63,36 +39,20 @@ class EMSStatus extends IPSModule
             DIRECTORY_SEPARATOR .
             'module.html';
 
-
         if (!file_exists($file)) {
-
-            return
-                '<div style="padding:20px;">' .
-                'module.html wurde nicht gefunden.' .
-                '</div>';
+            return '<div style="padding:20px;">module.html wurde nicht gefunden.</div>';
         }
-
 
         $html =
             file_get_contents($file);
 
-
         if ($html === false) {
-
-            return
-                '<div style="padding:20px;">' .
-                'module.html konnte nicht gelesen werden.' .
-                '</div>';
+            return '<div style="padding:20px;">module.html konnte nicht gelesen werden.</div>';
         }
-
 
         return $html;
     }
 
-
-    /* ============================================================
-       MESSAGE SINK
-    ============================================================ */
 
     public function MessageSink(
         $TimeStamp,
@@ -100,7 +60,6 @@ class EMSStatus extends IPSModule
         $Message,
         $Data
     ): void {
-
         parent::MessageSink(
             $TimeStamp,
             $SenderID,
@@ -108,33 +67,23 @@ class EMSStatus extends IPSModule
             $Data
         );
 
-
         if (
             $Message === VM_UPDATE &&
             $SenderID === self::EMS_STATUS_ID
         ) {
-
             $this->SendLiveValues();
         }
     }
 
 
-    /* ============================================================
-       REQUEST ACTION
-    ============================================================ */
-
     public function RequestAction(
         $Ident,
         $Value
     ): void {
-
         if ($Ident === 'Refresh') {
-
             $this->SendLiveValues();
-
             return;
         }
-
 
         throw new Exception(
             'Invalid Ident: ' .
@@ -143,44 +92,31 @@ class EMSStatus extends IPSModule
     }
 
 
-    /* ============================================================
-       STATUSQUELLE LESEN
-    ============================================================ */
-
     private function ReadEMSStatus(): string
     {
         if (!IPS_VariableExists(self::EMS_STATUS_ID)) {
-
             return '';
         }
-
 
         $value =
             GetValue(
                 self::EMS_STATUS_ID
             );
 
-
         if (!is_string($value)) {
-
             $value =
                 (string) $value;
         }
 
-
         /*
-         * Falls die alte Statusvariable HTML enthält:
-         *
-         * Zeilenumbrüche vor dem Entfernen der Tags erhalten.
+         * HTML-Zeilenumbrüche erhalten.
          */
-
         $value =
             preg_replace(
                 '/<br\s*\/?>/i',
                 "\n",
                 $value
             );
-
 
         $value =
             preg_replace(
@@ -189,12 +125,10 @@ class EMSStatus extends IPSModule
                 $value
             );
 
-
         $value =
             strip_tags(
                 $value
             );
-
 
         $value =
             html_entity_decode(
@@ -204,22 +138,12 @@ class EMSStatus extends IPSModule
                 'UTF-8'
             );
 
-
-        /*
-         * Geschützte Leerzeichen normalisieren.
-         */
-
         $value =
             str_replace(
                 "\xC2\xA0",
                 ' ',
                 $value
             );
-
-
-        /*
-         * Mehrfache Leerzeichen reduzieren.
-         */
 
         $value =
             preg_replace(
@@ -228,11 +152,6 @@ class EMSStatus extends IPSModule
                 $value
             );
 
-
-        /*
-         * Mehrere Leerzeilen reduzieren.
-         */
-
         $value =
             preg_replace(
                 "/\n[ \t]*\n+/",
@@ -240,22 +159,16 @@ class EMSStatus extends IPSModule
                 $value
             );
 
-
         return trim(
             $value
         );
     }
 
 
-    /* ============================================================
-       REGEX HELPERS
-    ============================================================ */
-
     private function ExtractFloat(
         string $text,
         string $pattern
     ): ?float {
-
         if (
             preg_match(
                 $pattern,
@@ -263,10 +176,8 @@ class EMSStatus extends IPSModule
                 $match
             ) !== 1
         ) {
-
             return null;
         }
-
 
         $value =
             str_replace(
@@ -275,12 +186,9 @@ class EMSStatus extends IPSModule
                 $match[1]
             );
 
-
         if (!is_numeric($value)) {
-
             return null;
         }
-
 
         return (float) $value;
     }
@@ -290,7 +198,6 @@ class EMSStatus extends IPSModule
         string $text,
         string $pattern
     ): ?int {
-
         if (
             preg_match(
                 $pattern,
@@ -298,16 +205,12 @@ class EMSStatus extends IPSModule
                 $match
             ) !== 1
         ) {
-
             return null;
         }
-
 
         if (!is_numeric($match[1])) {
-
             return null;
         }
-
 
         return (int) $match[1];
     }
@@ -317,7 +220,6 @@ class EMSStatus extends IPSModule
         string $text,
         string $pattern
     ): ?string {
-
         if (
             preg_match(
                 $pattern,
@@ -325,10 +227,8 @@ class EMSStatus extends IPSModule
                 $match
             ) !== 1
         ) {
-
             return null;
         }
-
 
         return trim(
             $match[1]
@@ -336,23 +236,53 @@ class EMSStatus extends IPSModule
     }
 
 
-    /* ============================================================
-       EMS STATUS ZERLEGEN
-    ============================================================ */
+    private function ExtractProgram(
+        string $text
+    ): ?string {
+        /*
+         * Die bisherige Statusanzeige ist ungefähr:
+         *
+         * Energiemanagement
+         * Hochsommer
+         * PV ...
+         *
+         * Deshalb übernehmen wir die Zeile direkt nach
+         * "Energiemanagement".
+         */
+        if (
+            preg_match(
+                '/Energiemanagement\s*\n\s*([^\n]+)/iu',
+                $text,
+                $match
+            ) === 1
+        ) {
+            $program =
+                trim(
+                    $match[1]
+                );
+
+            /*
+             * Sicherheitsprüfung:
+             * Falls durch eine geänderte Quellformatierung
+             * bereits die PV-Zeile getroffen würde.
+             */
+            if (
+                !preg_match(
+                    '/^(PV|Gesamtlimit|N[aä]chstes|PV-Prognose)\b/iu',
+                    $program
+                )
+            ) {
+                return $program;
+            }
+        }
+
+        return null;
+    }
+
 
     private function ParseEMSStatus(
         string $text
     ): array {
-
-        /*
-         * --------------------------------------------------------
-         * PV aktuell
-         *
-         * Beispiel:
-         * PV 1.7 kW
-         * --------------------------------------------------------
-         */
-
         $pv =
             $this->ExtractFloat(
                 $text,
@@ -361,23 +291,11 @@ class EMSStatus extends IPSModule
 
 
         /*
-         * --------------------------------------------------------
-         * Netz
-         *
-         * Alte Statusanzeige unterscheidet:
-         *
-         * Einspeisung 0.1 kW
-         * Netzbezug 0.1 kW
-         *
-         * Unsere neue Darstellung:
-         *
-         * Einspeisung = negativ
-         * Bezug        = positiv
-         * --------------------------------------------------------
+         * Netz:
+         * Einspeisung negativ,
+         * Netzbezug positiv.
          */
-
         $grid = null;
-
 
         $export =
             $this->ExtractFloat(
@@ -385,36 +303,24 @@ class EMSStatus extends IPSModule
                 '/Einspeisung\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
             );
 
-
         if ($export !== null) {
-
             $grid =
                 -abs($export);
         }
 
-
         if ($grid === null) {
-
             $import =
                 $this->ExtractFloat(
                     $text,
                     '/Netzbezug\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
                 );
 
-
             if ($import !== null) {
-
                 $grid =
                     abs($import);
             }
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * SOC
-         * --------------------------------------------------------
-         */
 
         $soc =
             $this->ExtractFloat(
@@ -423,28 +329,12 @@ class EMSStatus extends IPSModule
             );
 
 
-        /*
-         * --------------------------------------------------------
-         * Gesamtlimit
-         * --------------------------------------------------------
-         */
-
         $limit =
             $this->ExtractFloat(
                 $text,
                 '/Gesamtlimit\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
             );
 
-
-        /*
-         * --------------------------------------------------------
-         * Nächstes Ziel
-         *
-         * Beispiel:
-         *
-         * Nächstes Ziel 17:00 / 100%
-         * --------------------------------------------------------
-         */
 
         $targetTime =
             $this->ExtractString(
@@ -460,24 +350,12 @@ class EMSStatus extends IPSModule
             );
 
 
-        /*
-         * --------------------------------------------------------
-         * SOC-Ladebedarf
-         * --------------------------------------------------------
-         */
-
         $socNeed =
             $this->ExtractFloat(
                 $text,
                 '/SOC-Ladebedarf\s+(-?\d+(?:[.,]\d+)?)\s*kW/i'
             );
 
-
-        /*
-         * --------------------------------------------------------
-         * Verbraucher
-         * --------------------------------------------------------
-         */
 
         $consumers =
             $this->ExtractInteger(
@@ -486,24 +364,12 @@ class EMSStatus extends IPSModule
             );
 
 
-        /*
-         * --------------------------------------------------------
-         * PV-Prognose
-         * --------------------------------------------------------
-         */
-
         $forecastEnergy =
             $this->ExtractFloat(
                 $text,
                 '/PV-Prognose\s+(-?\d+(?:[.,]\d+)?)\s*kWh/i'
             );
 
-
-        /*
-         * --------------------------------------------------------
-         * Peak
-         * --------------------------------------------------------
-         */
 
         $forecastPeak =
             $this->ExtractFloat(
@@ -512,12 +378,6 @@ class EMSStatus extends IPSModule
             );
 
 
-        /*
-         * --------------------------------------------------------
-         * Dauer
-         * --------------------------------------------------------
-         */
-
         $forecastDuration =
             $this->ExtractFloat(
                 $text,
@@ -525,7 +385,15 @@ class EMSStatus extends IPSModule
             );
 
 
+        $program =
+            $this->ExtractProgram(
+                $text
+            );
+
+
         return [
+            'program' =>
+                $program,
 
             'pv' =>
                 $pv,
@@ -559,14 +427,9 @@ class EMSStatus extends IPSModule
 
             'forecastDuration' =>
                 $forecastDuration
-
         ];
     }
 
-
-    /* ============================================================
-       DATEN SENDEN
-    ============================================================ */
 
     private function SendLiveValues(): void
     {
@@ -575,8 +438,8 @@ class EMSStatus extends IPSModule
 
 
         if ($text === '') {
-
             $payload = [
+                'program' => null,
 
                 'pv' => null,
                 'grid' => null,
@@ -592,11 +455,8 @@ class EMSStatus extends IPSModule
                 'forecastEnergy' => null,
                 'forecastPeak' => null,
                 'forecastDuration' => null
-
             ];
-
         } else {
-
             $payload =
                 $this->ParseEMSStatus(
                     $text
@@ -616,12 +476,6 @@ class EMSStatus extends IPSModule
             return;
         }
 
-
-        /*
-         * Nur Werte aktualisieren.
-         *
-         * Die HTML-Kachel wird NICHT neu aufgebaut.
-         */
 
         $this->UpdateVisualizationValue(
             $json
