@@ -35,12 +35,6 @@
     --green: #00b87a;
     --orange: #f28a1b;
     --purple: #a34fe0;
-
-    --program-bg:
-        rgba(229, 169, 0, 0.08);
-
-    --program-border:
-        rgba(229, 169, 0, 0.32);
 }
 
 
@@ -58,12 +52,6 @@
         --green: #25da91;
         --orange: #ff9d2d;
         --purple: #bb70ff;
-
-        --program-bg:
-            rgba(255, 200, 61, 0.08);
-
-        --program-border:
-            rgba(255, 200, 61, 0.30);
     }
 
 }
@@ -98,8 +86,6 @@ body {
 
 
 .ems {
-    position: relative;
-
     width: 100%;
     height: 100%;
 
@@ -107,6 +93,7 @@ body {
 
     grid-template-rows:
         1fr
+        auto
         1fr;
 
     overflow: hidden;
@@ -122,73 +109,8 @@ body {
 
 
 /* ============================================================
-   TAGESPROGRAMM
-============================================================ */
-
-.program-badge {
-    position: absolute;
-
-    z-index: 10;
-
-    top: 5px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    max-width: 45%;
-
-    padding:
-        3px
-        8px;
-
-    border:
-        1px solid
-        var(--program-border);
-
-    border-radius:
-        999px;
-
-    background:
-        var(--program-bg);
-
-    color:
-        var(--text);
-
-    font-size: 12px;
-
-    line-height: 1;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-.program-icon {
-    color: var(--yellow);
-
-    font-size: 14px;
-}
-
-
-.program-text {
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-/* ============================================================
    OBEN
+   NÄCHSTES ZIEL | PV-PROGNOSE
 ============================================================ */
 
 .top-row {
@@ -201,12 +123,6 @@ body {
         1fr;
 
     align-items: center;
-
-    padding-top: 13px;
-
-    border-bottom:
-        1px solid
-        var(--border);
 }
 
 
@@ -318,7 +234,83 @@ body {
 
 
 /* ============================================================
+   MITTE
+   PROGRAMM
+============================================================ */
+
+.program-row {
+    width: 100%;
+
+    min-height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        4px
+        8px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.program-line {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    text-align: center;
+}
+
+
+.program-icon {
+    flex: 0 0 auto;
+
+    color: var(--yellow);
+
+    font-size: 17px;
+
+    line-height: 1;
+}
+
+
+.program-text {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--text);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ============================================================
    UNTEN
+   PV | NETZ | SOC | GESAMTLIMIT
 ============================================================ */
 
 .bottom-row {
@@ -459,27 +451,6 @@ body {
     }
 
 
-    .program-badge {
-        top: 3px;
-
-        font-size: 12px;
-
-        padding:
-            3px
-            7px;
-    }
-
-
-    .program-icon {
-        font-size: 14px;
-    }
-
-
-    .top-row {
-        padding-top: 14px;
-    }
-
-
     .info-block {
         padding:
             3px
@@ -519,6 +490,25 @@ body {
 
         max-width: 160px;
 
+        font-size: 12px;
+    }
+
+
+    .program-row {
+        min-height: 28px;
+
+        padding:
+            3px
+            6px;
+    }
+
+
+    .program-icon {
+        font-size: 16px;
+    }
+
+
+    .program-text {
         font-size: 12px;
     }
 
@@ -567,7 +557,7 @@ body {
 
 /* ============================================================
    MOBILE
-   MINDESTENS 12 px
+   MINDESTENS 12 PX
 ============================================================ */
 
 @media (max-width: 520px) {
@@ -578,37 +568,6 @@ body {
             4px;
     }
 
-
-    /*
-     * Tagesprogramm deutlich sichtbar.
-     */
-
-    .program-badge {
-        top: 3px;
-
-        max-width: 56%;
-
-        padding:
-            4px
-            8px;
-
-        font-size: 12px;
-    }
-
-
-    .program-icon {
-        font-size: 17px;
-    }
-
-
-    .top-row {
-        padding-top: 20px;
-    }
-
-
-    /*
-     * Obere beiden Symbole auf Mobile grösser.
-     */
 
     .info-block {
         padding:
@@ -634,10 +593,6 @@ body {
     }
 
 
-    /*
-     * Keine kleinen Texte mehr unter 12 px.
-     */
-
     .info-label {
         font-size: 12px;
     }
@@ -661,9 +616,31 @@ body {
     }
 
 
-    /*
-     * Untere vier Symbole deutlich grösser.
-     */
+    .program-row {
+        min-height: 34px;
+
+        padding:
+            5px
+            8px;
+    }
+
+
+    .program-line {
+        gap: 8px;
+    }
+
+
+    .program-icon {
+        font-size: 20px;
+    }
+
+
+    .program-text {
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
 
     .metric {
         padding:
@@ -724,27 +701,6 @@ body {
     }
 
 
-    .program-badge {
-        top: 12px;
-
-        padding:
-            6px
-            13px;
-
-        font-size: 15px;
-    }
-
-
-    .program-icon {
-        font-size: 19px;
-    }
-
-
-    .top-row {
-        padding-top: 20px;
-    }
-
-
     .info-block {
         padding:
             10px
@@ -787,6 +743,25 @@ body {
         max-width: 390px;
 
         font-size: 15px;
+    }
+
+
+    .program-row {
+        min-height: 44px;
+
+        padding:
+            8px
+            12px;
+    }
+
+
+    .program-icon {
+        font-size: 21px;
+    }
+
+
+    .program-text {
+        font-size: 16px;
     }
 
 
@@ -840,31 +815,6 @@ body {
 
 
 <div class="ems">
-
-
-    <!-- TAGESPROGRAMM -->
-
-    <div
-        class="program-badge"
-        id="programBadge"
-    >
-
-        <span
-            class="program-icon"
-            id="programIcon"
-        >
-            ☀
-        </span>
-
-        <span
-            class="program-text"
-            id="program"
-        >
-            —
-        </span>
-
-    </div>
-
 
 
     <!-- ========================================================
@@ -964,6 +914,35 @@ body {
 
         </div>
 
+
+    </div>
+
+
+
+    <!-- ========================================================
+         MITTE
+         PROGRAMM
+    ========================================================= -->
+
+    <div class="program-row">
+
+        <div class="program-line">
+
+            <span
+                class="program-icon"
+                id="programIcon"
+            >
+                ☀
+            </span>
+
+            <span
+                class="program-text"
+                id="program"
+            >
+                —
+            </span>
+
+        </div>
 
     </div>
 
@@ -1158,6 +1137,7 @@ function numeric(
 }
 
 
+
 function power(value) {
 
     const result =
@@ -1177,6 +1157,7 @@ function power(value) {
 }
 
 
+
 function energy(value) {
 
     const result =
@@ -1194,6 +1175,7 @@ function energy(value) {
         " kWh"
     );
 }
+
 
 
 function percent(value) {
@@ -1218,6 +1200,7 @@ function percent(value) {
 }
 
 
+
 function setText(
     id,
     value
@@ -1237,12 +1220,12 @@ function setText(
 }
 
 
-/*
- * Tagesprogramm-Symbol.
- * Erst einmal einfache Zuordnung.
- */
 
-function programIcon(
+/* ============================================================
+   PROGRAMM ICON
+============================================================ */
+
+function getProgramIcon(
     program
 ) {
 
@@ -1253,33 +1236,23 @@ function programIcon(
 
 
     if (
-        value.includes(
-            "hochsommer"
-        ) ||
-        value.includes(
-            "sommer"
-        )
+        value.includes("hochsommer") ||
+        value.includes("sommer")
     ) {
         return "☀";
     }
 
 
     if (
-        value.includes(
-            "winter"
-        )
+        value.includes("winter")
     ) {
         return "❄";
     }
 
 
     if (
-        value.includes(
-            "übergang"
-        ) ||
-        value.includes(
-            "uebergang"
-        )
+        value.includes("übergang") ||
+        value.includes("uebergang")
     ) {
         return "◐";
     }
@@ -1288,6 +1261,11 @@ function programIcon(
     return "●";
 }
 
+
+
+/* ============================================================
+   LIVE DATEN
+============================================================ */
 
 function handleMessage(data) {
 
@@ -1322,7 +1300,7 @@ function handleMessage(data) {
 
 
     /* ========================================================
-       TAGESPROGRAMM
+       PROGRAMM
     ========================================================= */
 
     const program =
@@ -1341,7 +1319,7 @@ function handleMessage(data) {
 
     setText(
         "programIcon",
-        programIcon(
+        getProgramIcon(
             program
         )
     );
@@ -1382,6 +1360,7 @@ function handleMessage(data) {
         "target",
         targetText
     );
+
 
 
     let targetDetails =
@@ -1532,6 +1511,10 @@ function handleMessage(data) {
 }
 
 
+
+/* ============================================================
+   INITIALISIERUNG
+============================================================ */
 
 window.addEventListener(
     "load",
