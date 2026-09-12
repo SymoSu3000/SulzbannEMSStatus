@@ -16,6 +16,7 @@
     box-sizing: border-box;
 }
 
+
 /* ============================================================
    THEME
 ============================================================ */
@@ -26,14 +27,22 @@
     --text: #20262b;
     --muted: #66737b;
 
-    --border: rgba(0, 0, 0, 0.13);
+    --border:
+        rgba(0, 0, 0, 0.13);
 
     --yellow: #e5a900;
     --blue: #149be3;
     --green: #00b87a;
     --orange: #f28a1b;
     --purple: #a34fe0;
+
+    --program-bg:
+        rgba(229, 169, 0, 0.08);
+
+    --program-border:
+        rgba(229, 169, 0, 0.32);
 }
+
 
 @media (prefers-color-scheme: dark) {
 
@@ -42,18 +51,19 @@
         --muted: #a7bdc9;
 
         --border:
-            rgba(
-                120,
-                160,
-                178,
-                0.27
-            );
+            rgba(120, 160, 178, 0.27);
 
         --yellow: #ffc83d;
         --blue: #32a7f4;
         --green: #25da91;
         --orange: #ff9d2d;
         --purple: #bb70ff;
+
+        --program-bg:
+            rgba(255, 200, 61, 0.08);
+
+        --program-border:
+            rgba(255, 200, 61, 0.30);
     }
 
 }
@@ -88,6 +98,8 @@ body {
 
 
 .ems {
+    position: relative;
+
     width: 100%;
     height: 100%;
 
@@ -110,8 +122,73 @@ body {
 
 
 /* ============================================================
+   TAGESPROGRAMM
+============================================================ */
+
+.program-badge {
+    position: absolute;
+
+    z-index: 10;
+
+    top: 5px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    max-width: 45%;
+
+    padding:
+        3px
+        8px;
+
+    border:
+        1px solid
+        var(--program-border);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--program-bg);
+
+    color:
+        var(--text);
+
+    font-size: 12px;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.program-icon {
+    color: var(--yellow);
+
+    font-size: 14px;
+}
+
+
+.program-text {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ============================================================
    OBEN
-   NÄCHSTES ZIEL | PV-PROGNOSE
 ============================================================ */
 
 .top-row {
@@ -125,6 +202,8 @@ body {
 
     align-items: center;
 
+    padding-top: 13px;
+
     border-bottom:
         1px solid
         var(--border);
@@ -137,10 +216,7 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
-
-    gap: 12px;
 
     padding:
         5px
@@ -168,10 +244,6 @@ body {
 }
 
 
-/* ============================================================
-   OBERE SYMBOLE
-============================================================ */
-
 .big-icon {
     width: 42px;
     height: 42px;
@@ -196,10 +268,6 @@ body {
     color: var(--yellow);
 }
 
-
-/* ============================================================
-   OBERE TEXTE
-============================================================ */
 
 .info-text {
     min-width: 0;
@@ -241,7 +309,7 @@ body {
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 12px;
 
     white-space: nowrap;
 
@@ -251,7 +319,6 @@ body {
 
 /* ============================================================
    UNTEN
-   PV | NETZ | SOC | GESAMTLIMIT
 ============================================================ */
 
 .bottom-row {
@@ -270,10 +337,6 @@ body {
     align-items: stretch;
 }
 
-
-/*
- * Jeder der vier Bereiche erhält exakt dieselbe Struktur.
- */
 
 .metric {
     min-width: 0;
@@ -297,12 +360,6 @@ body {
 }
 
 
-/*
- * Feste Icon-Spalte + Textspalte.
- * Dadurch liegen PV / Netz / SOC / Gesamtlimit
- * sauber auf derselben Achse.
- */
-
 .metric-inner {
     display: grid;
 
@@ -319,10 +376,6 @@ body {
     min-width: 0;
 }
 
-
-/* ============================================================
-   UNTERE SYMBOLE
-============================================================ */
 
 .metric-icon {
     width: 30px;
@@ -360,10 +413,6 @@ body {
 }
 
 
-/* ============================================================
-   UNTERE TEXTE
-============================================================ */
-
 .metric-text {
     min-width: 60px;
 
@@ -374,7 +423,7 @@ body {
 .metric-label {
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 12px;
 
     line-height: 1.1;
 
@@ -410,9 +459,28 @@ body {
     }
 
 
-    .info-block {
-        gap: 0;
+    .program-badge {
+        top: 3px;
 
+        font-size: 12px;
+
+        padding:
+            3px
+            7px;
+    }
+
+
+    .program-icon {
+        font-size: 14px;
+    }
+
+
+    .top-row {
+        padding-top: 14px;
+    }
+
+
+    .info-block {
         padding:
             3px
             6px;
@@ -437,7 +505,7 @@ body {
 
 
     .info-label {
-        font-size: 10px;
+        font-size: 12px;
     }
 
 
@@ -449,9 +517,9 @@ body {
     .info-sub {
         margin-top: 2px;
 
-        max-width: 150px;
+        max-width: 160px;
 
-        font-size: 9px;
+        font-size: 12px;
     }
 
 
@@ -464,7 +532,7 @@ body {
 
     .metric-inner {
         grid-template-columns:
-            24px
+            26px
             auto;
 
         column-gap: 6px;
@@ -472,19 +540,19 @@ body {
 
 
     .metric-icon {
-        width: 24px;
+        width: 26px;
 
-        font-size: 21px;
+        font-size: 23px;
     }
 
 
     .metric-text {
-        min-width: 52px;
+        min-width: 55px;
     }
 
 
     .metric-label {
-        font-size: 9px;
+        font-size: 12px;
     }
 
 
@@ -498,75 +566,125 @@ body {
 
 
 /* ============================================================
-   MOBILE / SCHMAL
+   MOBILE
+   MINDESTENS 12 px
 ============================================================ */
 
 @media (max-width: 520px) {
 
     .ems {
-        padding: 4px;
+        padding:
+            5px
+            4px;
     }
 
 
+    /*
+     * Tagesprogramm deutlich sichtbar.
+     */
+
+    .program-badge {
+        top: 3px;
+
+        max-width: 56%;
+
+        padding:
+            4px
+            8px;
+
+        font-size: 12px;
+    }
+
+
+    .program-icon {
+        font-size: 17px;
+    }
+
+
+    .top-row {
+        padding-top: 20px;
+    }
+
+
+    /*
+     * Obere beiden Symbole auf Mobile grösser.
+     */
+
     .info-block {
         padding:
-            3px
-            4px;
+            4px
+            5px;
     }
 
 
     .info-inner {
         grid-template-columns:
-            22px
+            36px
+            auto;
+
+        column-gap: 7px;
+    }
+
+
+    .big-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 31px;
+    }
+
+
+    /*
+     * Keine kleinen Texte mehr unter 12 px.
+     */
+
+    .info-label {
+        font-size: 12px;
+    }
+
+
+    .info-main {
+        margin-top: 3px;
+
+        font-size: 18px;
+    }
+
+
+    .info-sub {
+        margin-top: 3px;
+
+        max-width: 135px;
+
+        font-size: 12px;
+
+        line-height: 1.15;
+    }
+
+
+    /*
+     * Untere vier Symbole deutlich grösser.
+     */
+
+    .metric {
+        padding:
+            3px
+            2px;
+    }
+
+
+    .metric-inner {
+        grid-template-columns:
+            32px
             auto;
 
         column-gap: 5px;
     }
 
 
-    .big-icon {
-        width: 22px;
-        height: 22px;
-
-        font-size: 19px;
-    }
-
-
-    .info-label {
-        font-size: 8px;
-    }
-
-
-    .info-main {
-        font-size: 14px;
-    }
-
-
-    .info-sub {
-        max-width: 115px;
-
-        font-size: 8px;
-    }
-
-
-    .metric {
-        padding: 2px;
-    }
-
-
-    .metric-inner {
-        grid-template-columns:
-            19px
-            auto;
-
-        column-gap: 3px;
-    }
-
-
     .metric-icon {
-        width: 19px;
+        width: 32px;
 
-        font-size: 17px;
+        font-size: 28px;
     }
 
 
@@ -576,14 +694,14 @@ body {
 
 
     .metric-label {
-        font-size: 8px;
+        font-size: 12px;
     }
 
 
     .metric-value {
-        margin-top: 2px;
+        margin-top: 3px;
 
-        font-size: 13px;
+        font-size: 17px;
     }
 
 }
@@ -603,6 +721,27 @@ body {
         padding:
             18px
             28px;
+    }
+
+
+    .program-badge {
+        top: 12px;
+
+        padding:
+            6px
+            13px;
+
+        font-size: 15px;
+    }
+
+
+    .program-icon {
+        font-size: 19px;
+    }
+
+
+    .top-row {
+        padding-top: 20px;
     }
 
 
@@ -701,6 +840,31 @@ body {
 
 
 <div class="ems">
+
+
+    <!-- TAGESPROGRAMM -->
+
+    <div
+        class="program-badge"
+        id="programBadge"
+    >
+
+        <span
+            class="program-icon"
+            id="programIcon"
+        >
+            ☀
+        </span>
+
+        <span
+            class="program-text"
+            id="program"
+        >
+            —
+        </span>
+
+    </div>
+
 
 
     <!-- ========================================================
@@ -989,11 +1153,9 @@ function numeric(
         return null;
     }
 
-
     return Number(value)
         .toFixed(decimals);
 }
-
 
 
 function power(value) {
@@ -1004,18 +1166,15 @@ function power(value) {
             1
         );
 
-
     if (result === null) {
         return "—";
     }
-
 
     return (
         result +
         " kW"
     );
 }
-
 
 
 function energy(value) {
@@ -1026,18 +1185,15 @@ function energy(value) {
             1
         );
 
-
     if (result === null) {
         return "—";
     }
-
 
     return (
         result +
         " kWh"
     );
 }
-
 
 
 function percent(value) {
@@ -1053,7 +1209,6 @@ function percent(value) {
         return "—";
     }
 
-
     return (
         Math.round(
             Number(value)
@@ -1061,7 +1216,6 @@ function percent(value) {
         " %"
     );
 }
-
 
 
 function setText(
@@ -1074,16 +1228,65 @@ function setText(
             id
         );
 
-
     if (!element) {
         return;
     }
-
 
     element.textContent =
         value;
 }
 
+
+/*
+ * Tagesprogramm-Symbol.
+ * Erst einmal einfache Zuordnung.
+ */
+
+function programIcon(
+    program
+) {
+
+    const value =
+        String(
+            program || ""
+        ).toLowerCase();
+
+
+    if (
+        value.includes(
+            "hochsommer"
+        ) ||
+        value.includes(
+            "sommer"
+        )
+    ) {
+        return "☀";
+    }
+
+
+    if (
+        value.includes(
+            "winter"
+        )
+    ) {
+        return "❄";
+    }
+
+
+    if (
+        value.includes(
+            "übergang"
+        ) ||
+        value.includes(
+            "uebergang"
+        )
+    ) {
+        return "◐";
+    }
+
+
+    return "●";
+}
 
 
 function handleMessage(data) {
@@ -1115,6 +1318,33 @@ function handleMessage(data) {
     ) {
         return;
     }
+
+
+
+    /* ========================================================
+       TAGESPROGRAMM
+    ========================================================= */
+
+    const program =
+        data.program
+            ? String(
+                data.program
+            )
+            : "—";
+
+
+    setText(
+        "program",
+        program
+    );
+
+
+    setText(
+        "programIcon",
+        programIcon(
+            program
+        )
+    );
 
 
 
@@ -1152,7 +1382,6 @@ function handleMessage(data) {
         "target",
         targetText
     );
-
 
 
     let targetDetails =
@@ -1303,10 +1532,6 @@ function handleMessage(data) {
 }
 
 
-
-/* ============================================================
-   INITIALISIERUNG
-============================================================ */
 
 window.addEventListener(
     "load",
